@@ -1,6 +1,6 @@
 package uz.axrorxoja.data.model
 
-internal class Match(
+class Match(
     val id: Long,
     val season: Season,
     val utcDate: String,
@@ -10,6 +10,7 @@ internal class Match(
     val stage: String,
     val group: String,
     val lastUpdated: String,
-    val homeTeam: Team,
-    val awayTeam: Team,
+    val homeTeam: TeamInfo,
+    val awayTeam: TeamInfo,
+    val score: Score
 )

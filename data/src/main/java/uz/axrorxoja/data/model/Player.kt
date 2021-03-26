@@ -1,6 +1,6 @@
 package uz.axrorxoja.data.model
 
-internal class Player(
+class Player(
     val id: Long,
     val name: String,
     val shirtNumber: Int,

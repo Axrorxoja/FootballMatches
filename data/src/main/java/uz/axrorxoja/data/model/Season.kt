@@ -2,7 +2,7 @@ package uz.axrorxoja.data.model
 
 import com.squareup.moshi.Json
 
-internal class Season(
+class Season(
     val id: Long,
     val startDate: String,
     val endDate: String,

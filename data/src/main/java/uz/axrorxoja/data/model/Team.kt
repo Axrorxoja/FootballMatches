@@ -1,10 +1,18 @@
 package uz.axrorxoja.data.model
 
-internal class Team(
+class Team(
     val id: Long,
+    val area: Area,
     val name: String,
-    val coach: Coach,
-    val captain: Player,
-    val lineup: List<Player>,
-    val bench: List<Player>
+    val shortName: String,
+    val tla: String,
+    val cresUrl: String,
+    val address: String,
+    val phone: String,
+    val website: String,
+    val email: String,
+    val founded: Int,
+    val clubColors: String,
+    val venue: String,
+    val lastUpdated: String
 )
