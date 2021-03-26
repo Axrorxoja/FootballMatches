@@ -2,8 +2,8 @@
     <string name="app_name">FootballMatches</string>
     <string name="tap_to_try_again">Tap to try again</string>
 
-    <string name="no_internet">No Internet, please turn on internet and try again</string>
-    <string name="unknown_error">Unknown error, please try again</string>
+    <string name="no_internet">No Internet,\n please turn on internet and try again</string>
+    <string name="unknown_error">Unknown error,\n please try again</string>
     <string name="name">Name:</string>
     <string name="shortname">ShortName:</string>
     <string name="address">Address:</string>

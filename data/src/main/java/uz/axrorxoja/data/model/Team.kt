@@ -6,7 +6,7 @@ class Team(
     val name: String,
     val shortName: String,
     val tla: String,
-    val cresUrl: String,
+    val crestUrl: String,
     val address: String,
     val phone: String,
     val website: String,

@@ -61,7 +61,8 @@
             android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="@id/end_guideline"
             app:layout_constraintStart_toStartOf="@id/start_guideline"
-            app:layout_constraintTop_toTopOf="@id/top_guideline" />
+            app:layout_constraintTop_toTopOf="@id/top_guideline"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/label_name"
@@ -176,11 +177,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tap_to_try_again"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintEnd_toEndOf="@id/end_guideline"
+            app:layout_constraintStart_toStartOf="@id/start_guideline"
+            app:layout_constraintTop_toBottomOf="@id/button_try_again" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_error"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="button_try_again,tv_error_msg" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_progress"
@@ -190,7 +207,7 @@
             app:constraint_referenced_ids="view,progressBar" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/group"
+            android:id="@+id/group_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="tv_website,label_address,label_phone,tv_name,label_name,tv_address,label_email,tv_email,tv_phone,image_view,label_website,tv_short_name,label_short_name" />

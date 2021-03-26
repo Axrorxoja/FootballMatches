@@ -67,8 +67,10 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
             data.success != null -> setData(data.success)
             data.progress != null -> binding.groupProgress.visibility = View.VISIBLE
             else -> {
-                binding.buttonTryAgain.visibility = View.VISIBLE
-                binding.group.visibility = View.GONE
+                binding.groupProgress.visibility = View.GONE
+                binding.groupError.visibility = View.VISIBLE
+                binding.tvErrorMsg.text = data.error
+                binding.groupAll.visibility = View.INVISIBLE
             }
         }
     }
@@ -80,11 +82,13 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
 
     private fun setData(data: Team) {
         binding.groupProgress.visibility = View.GONE
+        binding.groupError.visibility = View.GONE
+        binding.groupAll.visibility = View.VISIBLE
 
-         val imageLoader = ImageLoader.Builder(requireContext())
+        val imageLoader = ImageLoader.Builder(requireContext())
             .componentRegistry { add(SvgDecoder(requireContext())) }
             .build()
-        binding.imageView.load(data.crestUrl,imageLoader)
+        binding.imageView.load(data.crestUrl, imageLoader)
         binding.tvName.text = data.name
         binding.tvShortName.text = data.shortName
         binding.tvAddress.text = data.address

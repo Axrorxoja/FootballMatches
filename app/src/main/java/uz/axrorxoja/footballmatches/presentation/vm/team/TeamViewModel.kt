@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import uz.axrorxoja.domain.global.DomainState
 import uz.axrorxoja.domain.usecase.ILoadMostWinningTeamUseCase
 import uz.axrorxoja.footballmatches.R
-import uz.axrorxoja.footballmatches.di.scope.FragmentScope
 import uz.axrorxoja.footballmatches.util.IResourceProvider
 import javax.inject.Inject
 
@@ -32,11 +32,10 @@ class TeamViewModel @Inject constructor(
     }
 
     private fun handleState(state: DomainState) {
-        when (state) {
-            is DomainState.SuccessTeam -> screenState.value = TeamScreenState(success = state.data)
-
+        Timber.d("handleState $state")
+        screenState.value = when (state) {
+            is DomainState.SuccessTeam -> TeamScreenState(success = state.data)
             is DomainState.NoNetwork -> TeamScreenState(error = resourceProvider.getString(R.string.no_internet))
-
             else -> TeamScreenState(error = resourceProvider.getString(R.string.unknown_error))
         }
     }
