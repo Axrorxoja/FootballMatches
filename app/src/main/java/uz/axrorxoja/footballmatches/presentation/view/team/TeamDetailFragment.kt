@@ -9,12 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenResumed
+import coil.ImageLoader
+import coil.decode.SvgDecoder
 import coil.load
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import uz.axrorxoja.data.model.Team
 import uz.axrorxoja.footballmatches.R
 import uz.axrorxoja.footballmatches.databinding.FragmentTeamDetailBinding
@@ -40,11 +42,13 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            whenResumed {
-                viewModel.screenState
-                    .filterNot { it.default }
-                    .collect(::setUpData)
+        viewLifecycleOwnerLiveData.observe(this) { lifeCycOwner ->
+            if (lifeCycOwner != null) {
+                lifeCycOwner.lifecycleScope.launch {
+                    viewModel.screenState
+                        .filterNot { it.default }
+                        .collect(::setUpData)
+                }
             }
         }
     }
@@ -58,6 +62,7 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
     }
 
     private fun setUpData(data: TeamScreenState) {
+        Timber.d("setUpData $data")
         when {
             data.success != null -> setData(data.success)
             data.progress != null -> binding.groupProgress.visibility = View.VISIBLE
@@ -68,11 +73,20 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.buttonTryAgain.setOnClickListener { viewModel.loadData() }
+    }
+
     private fun setData(data: Team) {
         binding.groupProgress.visibility = View.GONE
 
-        binding.imageView.load(data.cresUrl)
+         val imageLoader = ImageLoader.Builder(requireContext())
+            .componentRegistry { add(SvgDecoder(requireContext())) }
+            .build()
+        binding.imageView.load(data.crestUrl,imageLoader)
         binding.tvName.text = data.name
+        binding.tvShortName.text = data.shortName
         binding.tvAddress.text = data.address
         binding.tvPhone.text = data.phone
         binding.tvWebsite.text = data.website
