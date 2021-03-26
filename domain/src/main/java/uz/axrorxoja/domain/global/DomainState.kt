@@ -1,7 +1,10 @@
 package uz.axrorxoja.domain.global
 
+import uz.axrorxoja.data.model.Team
+
 sealed class DomainState {
-    class Success<T>(data: T) : DomainState()
     object NoNetwork : DomainState()
     object UnKnownError : DomainState()
+    class SuccessTeam(val data: Team) : DomainState()
+
 }

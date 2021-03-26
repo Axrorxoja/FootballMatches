@@ -3,11 +3,12 @@ package uz.axrorxoja.data.network
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import uz.axrorxoja.data.model.*
+import uz.axrorxoja.data.model.Competition
 import uz.axrorxoja.data.model.CompetitionResponse
 import uz.axrorxoja.data.model.MatchResponse
+import uz.axrorxoja.data.model.Team
 
-internal interface Api {
+interface Api {
     @GET("v2/competitions/{competitionId}/matches?matchday=1")
     suspend fun matches(
         @Path("competitionId") id: Long,

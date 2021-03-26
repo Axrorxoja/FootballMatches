@@ -12,7 +12,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-internal class LoadMostWinningTeamUseCase(
+class LoadMostWinningTeamUseCase(
     private val matchRepository: IMatchRepository,
     private val competitionRepository: ICompetitionRepository,
     private val teamRepository: ITeamRepository
@@ -36,7 +36,7 @@ internal class LoadMostWinningTeamUseCase(
             return if (matchData != null) {
                 val teamId = computeMostWinningTeam(matchData)
                 val teamResult = teamRepository.teamById(teamId)
-                if (teamResult.data != null) DomainState.Success(teamResult.data!!)
+                if (teamResult.data != null) DomainState.SuccessTeam(teamResult.data!!)
                 else teamResult.error.createStateByException()
             } else matchError.createStateByException()
         } else {

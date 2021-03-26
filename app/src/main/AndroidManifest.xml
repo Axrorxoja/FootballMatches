@@ -12,7 +12,7 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.FootballMatches">
         <activity
-            android:name=".presentation.view.MainActivity"
+            android:name=".AppActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.FootballMatches.NoActionBar">
             <intent-filter>
