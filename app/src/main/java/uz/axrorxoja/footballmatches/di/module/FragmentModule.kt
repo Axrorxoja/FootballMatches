@@ -1,8 +1,7 @@
-package uz.axrorxoja.footballmatches.di.module.app
+package uz.axrorxoja.footballmatches.di.module
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import uz.axrorxoja.footballmatches.di.module.TeamDetailFragmentModule
 import uz.axrorxoja.footballmatches.di.scope.FragmentScope
 import uz.axrorxoja.footballmatches.presentation.view.team.TeamDetailFragment
 
@@ -10,7 +9,7 @@ import uz.axrorxoja.footballmatches.presentation.view.team.TeamDetailFragment
 interface FragmentModule {
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [TeamDetailFragmentModule::class])
+    @ContributesAndroidInjector
     fun teamDetailFragment(): TeamDetailFragment
 
 }

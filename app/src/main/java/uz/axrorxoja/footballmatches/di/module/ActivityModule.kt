@@ -1,4 +1,4 @@
-package uz.axrorxoja.footballmatches.di.module.app
+package uz.axrorxoja.footballmatches.di.module
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

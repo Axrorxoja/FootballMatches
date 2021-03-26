@@ -27,6 +27,7 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+
     private val viewModel: ITeamViewModel by viewModels<TeamViewModel> { factory }
     private var _binding: FragmentTeamDetailBinding? = null
     private val binding get() = _binding!!

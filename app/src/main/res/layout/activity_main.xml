@@ -22,7 +22,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/first_fragment"
-        android:name="uz.axrorxoja.footballmatches.presentation.view.FirstFragment"
+        android:name="uz.axrorxoja.footballmatches.presentation.view.team.TeamDetailFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:tag="first_fragment" />
