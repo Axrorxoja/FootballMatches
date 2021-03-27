@@ -56,9 +56,13 @@ class LoadMostWinningTeamUseCase(
             }
         }
 
-    private fun getSuitableDate(competitionData: Competition): Pair<String, String> {
+    fun getSuitableDate(competitionData: Competition): Pair<String, String> {
         val season = competitionData.currentSeason
-        val endDate = dateFormatter.parse(season.endDate)
+        val endDate = try {
+            dateFormatter.parse(season.endDate)
+        } catch (e: Exception) {
+            null
+        }
         return if (endDate != null) {
             if (endDate.before(Date())) {
                 val dateFrom = dateFormatter.format(monthAgoDate())
@@ -75,7 +79,7 @@ class LoadMostWinningTeamUseCase(
 
     }
 
-    private fun computeMostWinningTeam(matches: List<Match>): Long {
+    fun computeMostWinningTeam(matches: List<Match>): Long {
         val map = hashMapOf<Long, Int>()
         for (match in matches) {
             when (match.score.winner) {

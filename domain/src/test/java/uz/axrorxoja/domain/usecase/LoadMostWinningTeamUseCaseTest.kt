@@ -15,7 +15,8 @@ import uz.axrorxoja.data.repository.team.TeamResult
 import uz.axrorxoja.domain.global.Const
 import uz.axrorxoja.domain.global.DomainState
 import java.io.IOException
-import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LoadMostWinningTeamUseCaseTest {
     private val matchRepository = Mockito.mock(IMatchRepository::class.java)
@@ -23,12 +24,13 @@ class LoadMostWinningTeamUseCaseTest {
     private val teamRepository = Mockito.mock(ITeamRepository::class.java)
     private val testCoroutine = TestCoroutineScope()
     private val dispatcherProvider = TestDispatcherProvider()
-    private val repository: ILoadMostWinningTeamUseCase = LoadMostWinningTeamUseCase(
+    private val useCase = LoadMostWinningTeamUseCase(
         matchRepository,
         competitionRepository,
         teamRepository,
         dispatcherProvider
     )
+    private val dateFormatter = SimpleDateFormat(Const.DEFAULT_SERVER_DATE_FORMAT)
 
     @Test
     fun `loadMostWinningTeamMatches with success`() = testCoroutine.runBlockingTest {
@@ -103,7 +105,7 @@ class LoadMostWinningTeamUseCaseTest {
         val winningTeam = Team(1L, area, "", "", "", "", "", "", "", "", 0, "", "", "")
         val teamResult = TeamResult(data = winningTeam)
         Mockito.`when`(teamRepository.teamById(1L)).thenReturn(teamResult)
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Mockito.verify(matchRepository).matchesByCompetition(
             Mockito.anyLong(),
@@ -122,7 +124,7 @@ class LoadMostWinningTeamUseCaseTest {
         Mockito.`when`(competitionRepository.competitionById(competitionId))
             .thenReturn(CompetitionResult(error = IOException()))
 
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Assert.assertTrue(state == DomainState.NoNetwork)
     }
@@ -134,7 +136,7 @@ class LoadMostWinningTeamUseCaseTest {
         Mockito.`when`(competitionRepository.competitionById(competitionId))
             .thenReturn(CompetitionResult(error = IndexOutOfBoundsException()))
 
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Assert.assertTrue(state == DomainState.UnKnownError)
     }
@@ -163,7 +165,7 @@ class LoadMostWinningTeamUseCaseTest {
                 "2021-03-27"
             )
         ).thenReturn(matchResult)
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Mockito.verify(matchRepository).matchesByCompetition(
             Mockito.anyLong(),
@@ -197,7 +199,7 @@ class LoadMostWinningTeamUseCaseTest {
                 "2021-03-27"
             )
         ).thenReturn(matchResult)
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Mockito.verify(matchRepository).matchesByCompetition(
             Mockito.anyLong(),
@@ -279,7 +281,7 @@ class LoadMostWinningTeamUseCaseTest {
         ).thenReturn(matchResult)
         val teamResult = TeamResult(error = IOException())
         Mockito.`when`(teamRepository.teamById(1L)).thenReturn(teamResult)
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Mockito.verify(matchRepository).matchesByCompetition(
             Mockito.anyLong(),
@@ -362,7 +364,7 @@ class LoadMostWinningTeamUseCaseTest {
         ).thenReturn(matchResult)
         val teamResult = TeamResult(error = Exception())
         Mockito.`when`(teamRepository.teamById(1L)).thenReturn(teamResult)
-        val state = repository.loadMostWinningTeamMatches()
+        val state = useCase.loadMostWinningTeamMatches()
         Mockito.verify(competitionRepository).competitionById(Mockito.anyLong())
         Mockito.verify(matchRepository).matchesByCompetition(
             Mockito.anyLong(),
@@ -371,5 +373,116 @@ class LoadMostWinningTeamUseCaseTest {
         )
         Mockito.verify(teamRepository).teamById(Mockito.anyLong())
         Assert.assertTrue(state is DomainState.UnKnownError)
+    }
+
+    @Test
+    fun `getSuitableDate endDate before currentDate`() {
+        val season = Season(12L, "2020-09-21", "2021-03-11", "")
+        val area = Area(12L, "", "", "")
+        val competition = Competition(
+            12L,
+            area,
+            "", "", "",
+            season,
+            ""
+        )
+        val pair = useCase.getSuitableDate(competition)
+        val dateTo = dateFormatter.format(Date())
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MONTH, -1)
+        val dateFrom = dateFormatter.format(calendar.time)
+        Assert.assertTrue(pair.first == dateFrom)
+        Assert.assertTrue(pair.second == dateTo)
+    }
+
+    @Test
+    fun `getSuitableDate endDate isn't before currentDate`() {
+        val dateFrom = "2020-09-21"
+        val dateTo = "2021-04-11"
+        val season = Season(12L, dateFrom, dateTo, "")
+        val area = Area(12L, "", "", "")
+        val competition = Competition(
+            12L,
+            area,
+            "", "", "",
+            season,
+            ""
+        )
+        val pair = useCase.getSuitableDate(competition)
+        Assert.assertTrue(pair.first == dateFrom)
+        Assert.assertTrue(pair.second == dateTo)
+    }
+
+    @Test
+    fun `getSuitableDate endDate is null`() {
+        val season = Season(12L, "2020-09-21", "", "")
+        val area = Area(12L, "", "", "")
+        val competition = Competition(
+            12L,
+            area,
+            "", "", "",
+            season,
+            ""
+        )
+        val pair = useCase.getSuitableDate(competition)
+        val dateTo = dateFormatter.format(Date())
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MONTH, -1)
+        val dateFrom = dateFormatter.format(calendar.time)
+        Assert.assertTrue(pair.first == dateFrom)
+        Assert.assertTrue(pair.second == dateTo)
+    }
+
+    @Test
+    fun `computeMostWinningTeam`() {
+        val coach = Coach(1L, "", "", "")
+        val player = Player(1L, "", 0)
+        val season = Season(12L, "2020-09-21", "2021-03-11", "")
+        val matches = listOf(
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(2L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            ),
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(3L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            ),
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(4L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            ),
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(5L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            ),
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(6L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            ),
+            Match(
+                1L, season, "", "", 0,
+                0, "", "", "",
+                TeamInfo(1L, "", coach, player, listOf(), listOf()),
+                TeamInfo(7L, "", coach, player, listOf(), listOf()),
+                Score(ScoreState.HOME_TEAM)
+            )
+        )
+        val winnerId = useCase.computeMostWinningTeam(matches)
+        Assert.assertTrue(winnerId == 1L)
     }
 }
