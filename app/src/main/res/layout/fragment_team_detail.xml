@@ -11,19 +11,6 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="16dp">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:alpha="0.25"
-            android:background="@color/black"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
@@ -204,7 +191,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="view,progressBar" />
+            app:constraint_referenced_ids="progressBar" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_all"
