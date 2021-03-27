@@ -41,7 +41,7 @@ class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        viewModel.loadData()
         viewLifecycleOwnerLiveData.observe(this) { lifeCycOwner ->
             if (lifeCycOwner != null) {
                 lifeCycOwner.lifecycleScope.launch {

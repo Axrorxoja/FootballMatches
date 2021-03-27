@@ -19,10 +19,6 @@ class TeamViewModel @Inject constructor(
 
     override val screenState = MutableStateFlow(TeamScreenState(default = true))
 
-    init {
-        loadData()
-    }
-
     override fun loadData() {
         viewModelScope.launch {
             screenState.value = TeamScreenState(progress = Unit)
