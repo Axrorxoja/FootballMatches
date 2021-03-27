@@ -4,6 +4,8 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import uz.axrorxoja.data.provider.DataProvider
+import uz.axrorxoja.domain.provider.DispatcherProvider
+import uz.axrorxoja.domain.provider.IDispatcherProvider
 import uz.axrorxoja.domain.usecase.ILoadMostWinningTeamUseCase
 import uz.axrorxoja.domain.usecase.LoadMostWinningTeamUseCase
 import uz.axrorxoja.footballmatches.App
@@ -16,13 +18,17 @@ class AppModule {
 
     @AppScope
     @Provides
-    fun provideContext(application: App): Context {
+    fun provideContext(
+        application: App
+    ): Context {
         return application.applicationContext
     }
 
     @AppScope
     @Provides
-    fun provideResourceProvider(context: Context): IResourceProvider {
+    fun provideResourceProvider(
+        context: Context
+    ): IResourceProvider {
         return ResourceProvider(context)
     }
 
@@ -32,12 +38,20 @@ class AppModule {
 
     @AppScope
     @Provides
-    fun provideUseCase(dataProvider: DataProvider): ILoadMostWinningTeamUseCase {
+    fun provideDispatcher(): IDispatcherProvider = DispatcherProvider()
+
+    @AppScope
+    @Provides
+    fun provideUseCase(
+        dataProvider: DataProvider,
+        dispatcherProvider: IDispatcherProvider
+    ): ILoadMostWinningTeamUseCase {
         val provider = dataProvider.repositoryProvider
         return LoadMostWinningTeamUseCase(
             provider.matchRepository,
             provider.competitionRepository,
-            provider.teamRepository
+            provider.teamRepository,
+            dispatcherProvider
         )
     }
 }

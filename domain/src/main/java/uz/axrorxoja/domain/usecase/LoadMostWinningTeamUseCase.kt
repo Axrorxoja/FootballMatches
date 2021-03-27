@@ -1,7 +1,5 @@
 package uz.axrorxoja.domain.usecase
 
-import android.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uz.axrorxoja.data.model.Competition
 import uz.axrorxoja.data.model.Match
@@ -11,49 +9,52 @@ import uz.axrorxoja.data.repository.match.IMatchRepository
 import uz.axrorxoja.data.repository.team.ITeamRepository
 import uz.axrorxoja.domain.global.Const
 import uz.axrorxoja.domain.global.DomainState
+import uz.axrorxoja.domain.provider.IDispatcherProvider
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val TAG = "LoadMostWinningTeamUseC"
 class LoadMostWinningTeamUseCase(
     private val matchRepository: IMatchRepository,
     private val competitionRepository: ICompetitionRepository,
-    private val teamRepository: ITeamRepository
+    private val teamRepository: ITeamRepository,
+    private val dispatcher: IDispatcherProvider
 ) : ILoadMostWinningTeamUseCase {
     private val dateFormatter =
         SimpleDateFormat(Const.DEFAULT_SERVER_DATE_FORMAT, Locale.getDefault())
 
-    override suspend fun loadMostWinningTeamMatches(): DomainState = withContext(Dispatchers.IO) {
-        val competitionResult = competitionRepository
-            .competitionById(Const.DEFAULT_COMPETITION_ID)
-        val competitionData = competitionResult.data
-        val competitionError = competitionResult.error
-        return@withContext if (competitionData != null) {
-            val pairDate = getSuitableDate(competitionData)
-            val matchResult = matchRepository
-                .matchesByCompetition(Const.DEFAULT_COMPETITION_ID, pairDate.first, pairDate.second)
+    override suspend fun loadMostWinningTeamMatches(): DomainState =
+        withContext(dispatcher.Default) {
+            val competitionResult = competitionRepository
+                .competitionById(Const.DEFAULT_COMPETITION_ID)
+            val competitionData = competitionResult.data
+            val competitionError = competitionResult.error
+            return@withContext if (competitionData != null) {
+                val pairDate = getSuitableDate(competitionData)
+                val matchResult = matchRepository
+                    .matchesByCompetition(
+                        Const.DEFAULT_COMPETITION_ID,
+                        pairDate.first,
+                        pairDate.second
+                    )
 
-            val matchData = matchResult.data
-            val matchError = matchResult.error
-            if (matchData != null) {
-                val teamId = computeMostWinningTeam(matchData)
-                val teamResult = teamRepository.teamById(teamId)
-                if (teamResult.data != null) {
-                    DomainState.SuccessTeam(teamResult.data!!)
+                val matchData = matchResult.data
+                val matchError = matchResult.error
+                if (matchData != null) {
+                    val teamId = computeMostWinningTeam(matchData)
+                    val teamResult = teamRepository.teamById(teamId)
+                    if (teamResult.data != null) {
+                        DomainState.SuccessTeam(teamResult.data!!)
+                    } else {
+                        teamResult.error.createStateByException()
+                    }
                 } else {
-                    Log.d(TAG,"teamResult ${teamResult.error}")
-                    teamResult.error.createStateByException()
+                    matchError.createStateByException()
                 }
             } else {
-                Log.d(TAG,"matchError $matchError")
-                matchError.createStateByException()
+                competitionError.createStateByException()
             }
-        } else {
-            Log.d(TAG,"competitionError $competitionError")
-            competitionError.createStateByException()
         }
-    }
 
     private fun getSuitableDate(competitionData: Competition): Pair<String, String> {
         val season = competitionData.currentSeason

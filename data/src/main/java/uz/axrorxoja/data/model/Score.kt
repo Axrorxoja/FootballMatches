@@ -2,10 +2,10 @@ package uz.axrorxoja.data.model
 
 class Score(
     val winner: ScoreState,
-    val fullTime: ScoreTime,
-    val halfTime: ScoreTime,
-    val extraTime: ScoreTime,
-    val penalties: ScoreTime,
+    val fullTime: ScoreTime? = null,
+    val halfTime: ScoreTime? = null,
+    val extraTime: ScoreTime? = null,
+    val penalties: ScoreTime? = null,
 )
 
 class ScoreTime(
