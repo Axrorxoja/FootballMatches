@@ -1,5 +1,6 @@
 package uz.axrorxoja.domain.usecase
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uz.axrorxoja.data.model.Competition
@@ -14,6 +15,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val TAG = "LoadMostWinningTeamUseC"
 class LoadMostWinningTeamUseCase(
     private val matchRepository: IMatchRepository,
     private val competitionRepository: ICompetitionRepository,
@@ -40,12 +42,15 @@ class LoadMostWinningTeamUseCase(
                 if (teamResult.data != null) {
                     DomainState.SuccessTeam(teamResult.data!!)
                 } else {
+                    Log.d(TAG,"teamResult ${teamResult.error}")
                     teamResult.error.createStateByException()
                 }
             } else {
+                Log.d(TAG,"matchError $matchError")
                 matchError.createStateByException()
             }
         } else {
+            Log.d(TAG,"competitionError $competitionError")
             competitionError.createStateByException()
         }
     }
