@@ -34,12 +34,17 @@ class LoadMostWinningTeamUseCase(
 
             val matchData = matchResult.data
             val matchError = matchResult.error
-            return@withContext if (matchData != null) {
+            if (matchData != null) {
                 val teamId = computeMostWinningTeam(matchData)
                 val teamResult = teamRepository.teamById(teamId)
-                if (teamResult.data != null) DomainState.SuccessTeam(teamResult.data!!)
-                else teamResult.error.createStateByException()
-            } else matchError.createStateByException()
+                if (teamResult.data != null) {
+                    DomainState.SuccessTeam(teamResult.data!!)
+                } else {
+                    teamResult.error.createStateByException()
+                }
+            } else {
+                matchError.createStateByException()
+            }
         } else {
             competitionError.createStateByException()
         }
