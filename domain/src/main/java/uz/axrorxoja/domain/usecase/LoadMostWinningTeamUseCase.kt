@@ -1,5 +1,7 @@
 package uz.axrorxoja.domain.usecase
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import uz.axrorxoja.data.model.Competition
 import uz.axrorxoja.data.model.Match
 import uz.axrorxoja.data.model.ScoreState
@@ -20,20 +22,19 @@ class LoadMostWinningTeamUseCase(
     private val dateFormatter =
         SimpleDateFormat(Const.DEFAULT_SERVER_DATE_FORMAT, Locale.getDefault())
 
-    override suspend fun loadMostWinningTeamMatches(): DomainState {
-
+    override suspend fun loadMostWinningTeamMatches(): DomainState = withContext(Dispatchers.IO) {
         val competitionResult = competitionRepository
             .competitionById(Const.DEFAULT_COMPETITION_ID)
         val competitionData = competitionResult.data
         val competitionError = competitionResult.error
-        return if (competitionData != null) {
+        return@withContext if (competitionData != null) {
             val pairDate = getSuitableDate(competitionData)
             val matchResult = matchRepository
                 .matchesByCompetition(Const.DEFAULT_COMPETITION_ID, pairDate.first, pairDate.second)
 
             val matchData = matchResult.data
             val matchError = matchResult.error
-            return if (matchData != null) {
+            return@withContext if (matchData != null) {
                 val teamId = computeMostWinningTeam(matchData)
                 val teamResult = teamRepository.teamById(teamId)
                 if (teamResult.data != null) DomainState.SuccessTeam(teamResult.data!!)

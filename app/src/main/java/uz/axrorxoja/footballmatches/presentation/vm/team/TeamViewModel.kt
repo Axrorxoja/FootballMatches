@@ -24,7 +24,7 @@ class TeamViewModel @Inject constructor(
     }
 
     override fun loadData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             screenState.value = TeamScreenState(progress = Unit)
             val state = useCase.loadMostWinningTeamMatches()
             handleState(state)
