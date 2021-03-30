@@ -1,6 +1,5 @@
 package uz.axrorxoja.footballmatches.presentation.view.team
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.load
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
@@ -25,19 +24,12 @@ import uz.axrorxoja.footballmatches.presentation.vm.team.TeamScreenState
 import uz.axrorxoja.footballmatches.presentation.vm.team.TeamViewModel
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class TeamDetailFragment : Fragment(R.layout.fragment_team_detail) {
 
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
-
-    private val viewModel: ITeamViewModel by viewModels<TeamViewModel> { factory }
+    private val viewModel: ITeamViewModel by viewModels<TeamViewModel>()
     private var _binding: FragmentTeamDetailBinding? = null
     private val binding get() = _binding!!
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

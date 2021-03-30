@@ -1,14 +1,12 @@
 package uz.axrorxoja.footballmatches
 
-import dagger.android.AndroidInjector
-import dagger.android.support.DaggerApplication
+import android.app.Application
+import androidx.viewbinding.BuildConfig
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
-import uz.axrorxoja.footballmatches.di.component.DaggerAppComponent
 
-class App : DaggerApplication() {
-
-    override fun applicationInjector(): AndroidInjector<App> =
-        DaggerAppComponent.factory().create(this)
+@HiltAndroidApp
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()

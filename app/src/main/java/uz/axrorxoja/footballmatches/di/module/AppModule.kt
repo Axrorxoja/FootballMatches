@@ -3,44 +3,40 @@ package uz.axrorxoja.footballmatches.di.module
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import uz.axrorxoja.data.provider.DataProvider
 import uz.axrorxoja.domain.provider.DispatcherProvider
 import uz.axrorxoja.domain.provider.IDispatcherProvider
 import uz.axrorxoja.domain.usecase.ILoadMostWinningTeamUseCase
 import uz.axrorxoja.domain.usecase.LoadMostWinningTeamUseCase
 import uz.axrorxoja.footballmatches.App
-import uz.axrorxoja.footballmatches.di.scope.AppScope
 import uz.axrorxoja.footballmatches.util.IResourceProvider
 import uz.axrorxoja.footballmatches.util.ResourceProvider
+import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class AppModule {
 
-    @AppScope
-    @Provides
-    fun provideContext(
-        application: App
-    ): Context {
-        return application.applicationContext
-    }
-
-    @AppScope
+    @Singleton
     @Provides
     fun provideResourceProvider(
-        context: Context
+        @ApplicationContext context: Context
     ): IResourceProvider {
         return ResourceProvider(context)
     }
 
-    @AppScope
+    @Singleton
     @Provides
     fun provideRepositoryProvider() = DataProvider()
 
-    @AppScope
+    @Singleton
     @Provides
     fun provideDispatcher(): IDispatcherProvider = DispatcherProvider()
 
-    @AppScope
+    @Singleton
     @Provides
     fun provideUseCase(
         dataProvider: DataProvider,
